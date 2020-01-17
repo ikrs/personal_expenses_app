@@ -21,24 +21,34 @@ class NewTransaction extends StatelessWidget {
               // flutter automatically connects controllers to our text inputs and this
               //   controllers listen to user inputs and save the user input
               decoration: InputDecoration(labelText: 'Title'),
-              //onChanged: (value) => titleInput = value,
+              onSubmitted: (_) => submitData(),
             ),
             TextField(
               decoration: InputDecoration(labelText: 'Amount'),
               controller: amountController,
-              //onChanged: (value) => amountInput = value,
+              keyboardType: TextInputType.number,
+              onSubmitted: (_) => submitData(),
             ),
             FlatButton(
               child: Text('Add Transaction'),
               textColor: Colors.purple,
-              onPressed: () => addNewTransaction(
-                titleController.text,
-                double.parse(amountController.text), // text in to double/float
-              ),
+              onPressed: submitData,
             ),
           ],
         ),
       ),
     );
+  }
+
+  void submitData() {
+    final enteredTitle = titleController.text;
+    final enteredAmount =
+        double.parse(amountController.text); // text to double/float
+
+    if (enteredTitle.isEmpty || enteredAmount <= 0) {
+      return;
+    }
+
+    addNewTransaction(enteredTitle, enteredAmount);
   }
 }
