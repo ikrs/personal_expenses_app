@@ -76,16 +76,24 @@ class _NewTransactionState extends State<NewTransaction> {
   }
 
   void _submitData() {
+    if (_amountController.text.isEmpty) {
+      return;
+    }
+
     final enteredTitle = _titleController.text;
     final enteredAmount =
         double.parse(_amountController.text); // text to double/float
 
-    if (enteredTitle.isEmpty || enteredAmount <= 0) {
+    if (enteredTitle.isEmpty || enteredAmount <= 0 || _selectedDate == null) {
       return;
     }
 
     //inherit function passed to constructor from parent StateFull widget
-    widget.addNewTransaction(enteredTitle, enteredAmount);
+    widget.addNewTransaction(
+      enteredTitle,
+      enteredAmount,
+      _selectedDate,
+    );
 
     // close model popup after submit
     Navigator.of(context).pop();
