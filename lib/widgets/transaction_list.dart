@@ -12,7 +12,7 @@ class TransactionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
+      height: 450,
       // adding scroll to the transaction with ListView, must use Container with defined height
       // better then SingleChildScrollView
       // ListView(children:[]) loads all list items
