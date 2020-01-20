@@ -85,32 +85,33 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // find out is user in Portrait or Landscape mode
     final bool isLandscape = mediaQuery.orientation == Orientation.landscape;
-    //a dding PreferredSizeWidget to not throw erros since flutter cant find 
+    //a dding PreferredSizeWidget to not throw erros since flutter cant find
     // prefferedSize inside cupertino
-    final PreferredSizeWidget appBar = Platform.isIOS ? CupertinoNavigationBar(
-      middle: Text(
-        'Personal Expenses',
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-        GestureDetector(
-          child: Icon(CupertinoIcons.add),
-          onTap: () => _startAddNewTransaction(context)
-        ),
-      ],)
-    ) : AppBar(
-      title: Text(
-        'Personal Expenses',
-      ),
-      actions: <Widget>[
-        // adding icon button
-        IconButton(
-          icon: Icon(Icons.add),
-          onPressed: () => _startAddNewTransaction(context),
-        ),
-      ],
-    );
+    final PreferredSizeWidget appBar = Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: Text(
+              'Personal Expenses',
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                GestureDetector(
+                    child: Icon(CupertinoIcons.add),
+                    onTap: () => _startAddNewTransaction(context)),
+              ],
+            ))
+        : AppBar(
+            title: Text(
+              'Personal Expenses',
+            ),
+            actions: <Widget>[
+              // adding icon button
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () => _startAddNewTransaction(context),
+              ),
+            ],
+          );
 
     // dynamicall height, 70% for transactions list minus height of status bar and appBar
     final transactionListWidget = Container(
@@ -122,7 +123,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
     // SafeArea makes sure that everyting is positioned correctly on ALL platforms
-    final pageBody = SafeArea(child: SingleChildScrollView(
+    final pageBody = SafeArea(
+      child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -131,7 +133,10 @@ class _MyHomePageState extends State<MyHomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('Show Chart'),
+                  Text(
+                    'Show Chart',
+                    style: Theme.of(context).textTheme.title,
+                  ),
                   // adding toggle button and update its state
                   // adaptive ajusts look for iOS and Android
                   Switch.adaptive(
@@ -171,22 +176,25 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
-    return Platform.isIOS ? CupertinoPageScaffold(
-      navigationBar: appBar,
-      child: pageBody,
-    ) : Scaffold(
-      appBar: appBar,
-      body: pageBody,
-      // adding and positioning float icon button
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      // dont display add button on IOS platform, just empty Container
-      floatingActionButton: Platform.isIOS
-          ? Container()
-          : FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () => _startAddNewTransaction(context),
-            ),
-    );
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: appBar,
+            child: pageBody,
+          )
+        : Scaffold(
+            appBar: appBar,
+            body: pageBody,
+            // adding and positioning float icon button
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            // dont display add button on IOS platform, just empty Container
+            floatingActionButton: Platform.isIOS
+                ? Container()
+                : FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () => _startAddNewTransaction(context),
+                  ),
+          );
   }
 
   void _addNewTransaction(
