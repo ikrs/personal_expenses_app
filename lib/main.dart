@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/cupertino.dart';
 
 import './widgets/transaction_list.dart';
 import './widgets/new_transaction.dart';
@@ -81,12 +84,24 @@ class _MyHomePageState extends State<MyHomePage> {
     final mediaQuery = MediaQuery.of(context);
 
     // find out is user in Portrait or Landscape mode
-    final bool isLandscape =
-        mediaQuery.orientation == Orientation.landscape;
-    final appBar = AppBar(
+    final bool isLandscape = mediaQuery.orientation == Orientation.landscape;
+    //a dding PreferredSizeWidget to not throw erros since flutter cant find 
+    // prefferedSize inside cupertino
+    final PreferredSizeWidget appBar = Platform.isIOS ? CupertinoNavigationBar(
+      middle: Text(
+        'Personal Expenses',
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+        GestureDetector(
+          child: Icon(CupertinoIcons.add),
+          onTap: () => _startAddNewTransaction(context)
+        ),
+      ],)
+    ) : AppBar(
       title: Text(
         'Personal Expenses',
-        style: TextStyle(fontFamily: 'OpenSans'),
       ),
       actions: <Widget>[
         // adding icon button
@@ -106,10 +121,8 @@ class _MyHomePageState extends State<MyHomePage> {
       child: TransactionList(_userTransactions, _deleteTransaction),
     );
 
-    return Scaffold(
-      appBar: appBar,
-      // added scrolling
-      body: SingleChildScrollView(
+    // SafeArea makes sure that everyting is positioned correctly on ALL platforms
+    final pageBody = SafeArea(child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -120,7 +133,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: <Widget>[
                   Text('Show Chart'),
                   // adding toggle button and update its state
-                  Switch(
+                  // adaptive ajusts look for iOS and Android
+                  Switch.adaptive(
+                      activeColor: Theme.of(context).accentColor,
                       value: _showChart,
                       onChanged: (value) {
                         setState(() {
@@ -139,8 +154,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     0.3,
                 child: Chart(_recentTransactions),
               ),
-            if (!isLandscape) transactionListWidget,
-            if (isLandscape) _showChart
+            if (!isLandscape)
+              transactionListWidget,
+            if (isLandscape)
+              _showChart
                   ? Container(
                       height: (mediaQuery.size.height -
                               appBar.preferredSize.height -
@@ -152,12 +169,23 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
+    );
+
+    return Platform.isIOS ? CupertinoPageScaffold(
+      navigationBar: appBar,
+      child: pageBody,
+    ) : Scaffold(
+      appBar: appBar,
+      body: pageBody,
       // adding and positioning float icon button
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => _startAddNewTransaction(context),
-      ),
+      // dont display add button on IOS platform, just empty Container
+      floatingActionButton: Platform.isIOS
+          ? Container()
+          : FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () => _startAddNewTransaction(context),
+            ),
     );
   }
 
