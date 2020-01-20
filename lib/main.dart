@@ -130,47 +130,19 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             // show toggle button only in Landscape mode
             if (isLandscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Show Chart',
-                    style: Theme.of(context).textTheme.title,
-                  ),
-                  // adding toggle button and update its state
-                  // adaptive ajusts look for iOS and Android
-                  Switch.adaptive(
-                      activeColor: Theme.of(context).accentColor,
-                      value: _showChart,
-                      onChanged: (value) {
-                        setState(() {
-                          _showChart = value;
-                        });
-                      }),
-                ],
+              ..._buildLandscapeContent(
+                mediaQuery,
+                appBar,
+                transactionListWidget,
               ),
             // display toggle button and chart based on device view angle (Portrait or Landscape)
             if (!isLandscape)
-              // dynamical height check where we take 30% of available height
-              Container(
-                height: (mediaQuery.size.height -
-                        appBar.preferredSize.height -
-                        mediaQuery.padding.top) *
-                    0.3,
-                child: Chart(_recentTransactions),
+              // spread operator - pull all elements out of array/list and merge them as single elements
+              ..._buildPotraitContent(
+                mediaQuery,
+                appBar,
+                transactionListWidget,
               ),
-            if (!isLandscape)
-              transactionListWidget,
-            if (isLandscape)
-              _showChart
-                  ? Container(
-                      height: (mediaQuery.size.height -
-                              appBar.preferredSize.height -
-                              mediaQuery.padding.top) *
-                          0.7,
-                      child: Chart(_recentTransactions),
-                    )
-                  : transactionListWidget,
           ],
         ),
       ),
@@ -195,6 +167,63 @@ class _MyHomePageState extends State<MyHomePage> {
                     onPressed: () => _startAddNewTransaction(context),
                   ),
           );
+  }
+
+  // builder method
+  List<Widget> _buildLandscapeContent(
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+    Widget transactionListWidget,
+  ) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            'Show Chart',
+            style: Theme.of(context).textTheme.title,
+          ),
+          // adding toggle button and update its state
+          // adaptive ajusts look for iOS and Android
+          Switch.adaptive(
+              activeColor: Theme.of(context).accentColor,
+              value: _showChart,
+              onChanged: (value) {
+                setState(() {
+                  _showChart = value;
+                });
+              }),
+        ],
+      ),
+      _showChart
+          ? Container(
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.7,
+              child: Chart(_recentTransactions),
+            )
+          : transactionListWidget,
+    ];
+  }
+
+  // builder method
+  List<Widget> _buildPotraitContent(
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+    Widget transactionListWidget,
+  ) {
+    // dynamical height check where we take 30% of available height
+    return [
+      Container(
+        height: (mediaQuery.size.height -
+                appBar.preferredSize.height -
+                mediaQuery.padding.top) *
+            0.3,
+        child: Chart(_recentTransactions),
+      ),
+      transactionListWidget,
+    ];
   }
 
   void _addNewTransaction(
