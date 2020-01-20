@@ -79,40 +79,45 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _showChart = false;
 
+  Widget _buildAndroidBar() {
+      return AppBar(
+        title: Text(
+          'Personal Expenses',
+        ),
+        actions: <Widget>[
+          // adding icon button
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () => _startAddNewTransaction(context),
+          ),
+        ],
+      );
+    }
+
+    Widget _buildIosBar() {
+      return CupertinoNavigationBar(
+          middle: Text(
+            'Personal Expenses',
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              GestureDetector(
+                  child: Icon(CupertinoIcons.add),
+                  onTap: () => _startAddNewTransaction(context)),
+            ],
+          ));
+    }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-
     // find out is user in Portrait or Landscape mode
     final bool isLandscape = mediaQuery.orientation == Orientation.landscape;
     //a dding PreferredSizeWidget to not throw erros since flutter cant find
     // prefferedSize inside cupertino
-    final PreferredSizeWidget appBar = Platform.isIOS
-        ? CupertinoNavigationBar(
-            middle: Text(
-              'Personal Expenses',
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                GestureDetector(
-                    child: Icon(CupertinoIcons.add),
-                    onTap: () => _startAddNewTransaction(context)),
-              ],
-            ))
-        : AppBar(
-            title: Text(
-              'Personal Expenses',
-            ),
-            actions: <Widget>[
-              // adding icon button
-              IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () => _startAddNewTransaction(context),
-              ),
-            ],
-          );
-
+    final PreferredSizeWidget appBar =
+        Platform.isIOS ? _buildIosBar() : _buildAndroidBar();
     // dynamicall height, 70% for transactions list minus height of status bar and appBar
     final transactionListWidget = Container(
       height: (mediaQuery.size.height -
