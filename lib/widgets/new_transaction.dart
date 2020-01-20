@@ -18,58 +18,67 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end, // button to the right
-          children: <Widget>[
-            TextField(
-              controller: _titleController,
-              // flutter automatically connects controllers to our text inputs and this
-              //   controllers listen to user inputs and save the user input
-              decoration: InputDecoration(labelText: 'Title'),
-              onSubmitted: (_) => _submitData(),
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Amount'),
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              onSubmitted: (_) => _submitData(),
-            ),
-            Container(
-              height: 70,
-              child: Row(
-                children: <Widget>[
-                  // expanded takes as much free space as it can get
-                  Expanded(
-                    child: Text(
-                      _selectedDate == null
-                          ? 'No date choosen!'
-                          : 'Picked Date : ${DateFormat('d.MM.y').format(_selectedDate)}',
-                    ),
-                  ),
-                  FlatButton(
-                    child: Text(
-                      'Choose Date',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
+    // make add new transaction form scrollable
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 5,
+        child: Container(
+          // adding dynamical padding for input form
+          padding: EdgeInsets.only(
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end, // button to the right
+            children: <Widget>[
+              TextField(
+                controller: _titleController,
+                // flutter automatically connects controllers to our text inputs and this
+                //   controllers listen to user inputs and save the user input
+                decoration: InputDecoration(labelText: 'Title'),
+                onSubmitted: (_) => _submitData(),
+              ),
+              TextField(
+                decoration: InputDecoration(labelText: 'Amount'),
+                controller: _amountController,
+                keyboardType: TextInputType.number,
+                onSubmitted: (_) => _submitData(),
+              ),
+              Container(
+                height: 70,
+                child: Row(
+                  children: <Widget>[
+                    // expanded takes as much free space as it can get
+                    Expanded(
+                      child: Text(
+                        _selectedDate == null
+                            ? 'No date choosen!'
+                            : 'Picked Date : ${DateFormat('d.MM.y').format(_selectedDate)}',
                       ),
                     ),
-                    textColor: Theme.of(context).primaryColor,
-                    onPressed: _presentDatePicker,
-                  )
-                ],
+                    FlatButton(
+                      child: Text(
+                        'Choose Date',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      textColor: Theme.of(context).primaryColor,
+                      onPressed: _presentDatePicker,
+                    )
+                  ],
+                ),
               ),
-            ),
-            RaisedButton(
-              child: Text('Add Transaction'),
-              color: Theme.of(context).primaryColor,
-              textColor: Theme.of(context).textTheme.button.color,
-              onPressed: _submitData,
-            ),
-          ],
+              RaisedButton(
+                child: Text('Add Transaction'),
+                color: Theme.of(context).primaryColor,
+                textColor: Theme.of(context).textTheme.button.color,
+                onPressed: _submitData,
+              ),
+            ],
+          ),
         ),
       ),
     );
