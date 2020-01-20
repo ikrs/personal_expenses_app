@@ -66,8 +66,14 @@ class TransactionList extends StatelessWidget {
                       transactions[index].date,
                     ),
                   ),
-                  // shows at the end of list tile
-                  trailing: IconButton(
+                  // shows Delete icon at the end of list tile, display button label 
+                  // text based on available width
+                  trailing: MediaQuery.of(context).size.width > 460 ? FlatButton.icon(
+                    textColor: Theme.of(context).errorColor,
+                    icon: Icon(Icons.delete),
+                    label: Text('Delete'),
+                    onPressed: () => deleteTransaction(transactions[index].id),
+                  ) :  IconButton(
                     icon: Icon(Icons.delete),
                     color: Theme.of(context).errorColor,
                     onPressed: () => deleteTransaction(transactions[index].id),
