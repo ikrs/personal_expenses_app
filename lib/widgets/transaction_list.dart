@@ -70,8 +70,10 @@ class TransactionList extends StatelessWidget {
                   // text based on available width
                   trailing: MediaQuery.of(context).size.width > 460 ? FlatButton.icon(
                     textColor: Theme.of(context).errorColor,
-                    icon: Icon(Icons.delete),
-                    label: Text('Delete'),
+                    // this will never change, it will always display Delete, so we tell flutter 
+                    // that he does not need to rebuild this widget
+                    icon: const Icon(Icons.delete),
+                    label: const Text('Delete'),
                     onPressed: () => deleteTransaction(transactions[index].id),
                   ) :  IconButton(
                     icon: Icon(Icons.delete),

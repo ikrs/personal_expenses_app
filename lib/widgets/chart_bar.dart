@@ -6,7 +6,10 @@ class ChartBar extends StatelessWidget {
   final double spendingAmount;
   final double spendingPercentOfTotal;
 
-  ChartBar(this.label, this.spendingAmount, this.spendingPercentOfTotal);
+  // create unmuttable object, all properties must be final, you can only 
+  // replace it with new Chart object 
+  // All Stateless widgets are immutable by design
+  const ChartBar(this.label, this.spendingAmount, this.spendingPercentOfTotal);
 
   @override
   Widget build(BuildContext context) {
