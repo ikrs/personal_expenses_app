@@ -12,7 +12,8 @@ class TransactionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return transactions.isEmpty
-        ? Column(
+        ? LayoutBuilder(builder: (context, constraints) {
+          return Column(
             children: <Widget>[
               Text(
                 'No Transactions added yet!',
@@ -20,18 +21,19 @@ class TransactionList extends StatelessWidget {
               ),
               //adding spaceing
               SizedBox(
-                height: 10,
+                height: 20,
               ),
               //adding image
               Container(
-                height: 200,
+                height: constraints.maxHeight * 0.6,
                 child: Image.asset(
                   'assets/images/waiting.png',
                   fit: BoxFit.cover,
                 ),
               ),
             ],
-          )
+          );
+        })
         // adding scroll to the transaction with ListView, must use Container with defined height
         // better then SingleChildScrollView
         // ListView(children:[]) loads all list items

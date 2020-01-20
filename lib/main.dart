@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:personal_expenses_app/widgets/new_transaction.dart';
-import 'package:personal_expenses_app/widgets/transaction_list.dart';
+import 'package:flutter/services.dart';
 
 import './widgets/transaction_list.dart';
 import './widgets/new_transaction.dart';
 import './models/transaction.dart';
 import './widgets/chart.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  // allowes us to set application wide settings for our app
+  // for example, here we are telling our application that it can only use Portrait mode
+  /* SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]); */
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -67,11 +74,13 @@ class _MyHomePageState extends State<MyHomePage> {
     ), */
   ];
 
-/*   final titleController = TextEditingController();
-  final amountController = TextEditingController(); */
+  bool _showChart = false;
 
   @override
   Widget build(BuildContext context) {
+    // find out is user in Portrait or Landscape mode
+    final bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     final appBar = AppBar(
       title: Text(
         'Personal Expenses',
@@ -86,6 +95,15 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
 
+    // dynamicall height, 70% for transactions list minus height of status bar and appBar
+    final transactionListWidget = Container(
+      height: (MediaQuery.of(context).size.height -
+              appBar.preferredSize.height -
+              MediaQuery.of(context).padding.top) *
+          0.7,
+      child: TransactionList(_userTransactions, _deleteTransaction),
+    );
+
     return Scaffold(
       appBar: appBar,
       // added scrolling
@@ -93,22 +111,42 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // dynamical height check where we take 30% of available height
-            //  for chart and 70% for transactions list minus height of status bar and appBar
-            Container(
-              height: (MediaQuery.of(context).size.height -
-                      appBar.preferredSize.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.3,
-              child: Chart(_recentTransactions),
-            ),
-            Container(
-              height: (MediaQuery.of(context).size.height -
-                      appBar.preferredSize.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.7,
-              child: TransactionList(_userTransactions, _deleteTransaction),
-            ),
+            // show toggle button only in Landscape mode
+            if (isLandscape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('Show Chart'),
+                  // adding toggle button and update its state
+                  Switch(
+                      value: _showChart,
+                      onChanged: (value) {
+                        setState(() {
+                          _showChart = value;
+                        });
+                      }),
+                ],
+              ),
+            // display toggle button and chart based on device view angle (Portrait or Landscape)
+            if (!isLandscape)
+              // dynamical height check where we take 30% of available height
+              Container(
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.3,
+                child: Chart(_recentTransactions),
+              ),
+            if (!isLandscape) transactionListWidget,
+            if (isLandscape) _showChart
+                  ? Container(
+                      height: (MediaQuery.of(context).size.height -
+                              appBar.preferredSize.height -
+                              MediaQuery.of(context).padding.top) *
+                          0.7,
+                      child: Chart(_recentTransactions),
+                    )
+                  : transactionListWidget,
           ],
         ),
       ),
